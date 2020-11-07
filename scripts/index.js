@@ -1,7 +1,7 @@
-// valor disponível para aposta
+// Valor disponível para aposta.
 const availableToBet = 500;
 
-// itens para aposta
+// Itens para aposta.
 const items = [
   {
     id: 1,
@@ -25,3 +25,29 @@ const items = [
     src: './assets/img/bomb.png',
   },
 ];
+
+// Define no HTML o valor disponível para apostar.
+const balanceElement = document.getElementById('balance');
+balanceElement.innerHTML = availableToBet;
+
+// Define a ação ao clicar no botão SPIN.
+const spinButtonElement = document.getElementById('spin-button');
+spinButtonElement.addEventListener('click', () => {
+  const slotItemOneElement = document.getElementById('slot-item-1');
+  const slotItemTwoElement = document.getElementById('slot-item-2');
+  const slotItemThreeElement = document.getElementById('slot-item-3');
+
+  // Método que randomiza o objeto que será exibido em cada slot.
+  function shufflee() {
+    const itemsLenght = items.length;
+    const randomNumber = Math.floor(Math.random() * itemsLenght);
+    const selectedItem = items[randomNumber];
+    return selectedItem.src;
+  }
+  
+  // Atribui ao HTML as imagens referentes aos objetos randomizados.
+  slotItemOneElement.src = shufflee();
+  slotItemTwoElement.src = shufflee();
+  slotItemThreeElement.src = shufflee();
+
+});
