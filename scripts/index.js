@@ -32,7 +32,6 @@ function createBalance(initialValue) {
   const transactions = [];
 
   function getBalance() {
-    console.log(`O saldo é de ${balance}`);
     return balance;
   }
 
@@ -63,9 +62,11 @@ balanceElement.innerHTML = availableToBet;
 // Define a ação ao clicar no botão SPIN.
 const spinButtonElement = document.getElementById('spin-button');
 spinButtonElement.addEventListener('click', () => {
+
   const slotItemOneElement = document.getElementById('slot-item-1');
   const slotItemTwoElement = document.getElementById('slot-item-2');
   const slotItemThreeElement = document.getElementById('slot-item-3');
+  
 
   // Captura o title.
   const titleElement = document.getElementById('title');
@@ -81,25 +82,22 @@ spinButtonElement.addEventListener('click', () => {
   balanceElement.innerText = myBalance.getBalance();
 
   // Atribui as imagens referentes aos objetos randomizados.
-  const resultShuffleOne = shuffle(slotItemOneElement, 20);
-  const resultShuffleTwo = shuffle(slotItemTwoElement, 40);
-  const resultShuffleThree = shuffle(slotItemThreeElement, 60);
+  shuffle(slotItemOneElement, 20);
+  shuffle(slotItemTwoElement, 40);
+  shuffle(slotItemThreeElement, 60, (callbackItem) => {
+    console.log('terminou de embaralhar todos os slots');
 
-  // // Exibe as imagens no HTML.
-  // slotItemOneElement.src = resultShuffleOne.src;
-  // slotItemTwoElement.src = resultShuffleTwo.src;
-  // slotItemThreeElement.src = resultShuffleThree.src;
-
-  // Compara se todos os objetos são iguais.
-  // if (
-  //   resultShuffleOne.id === resultShuffleTwo.id &&
-  //   resultShuffleTwo.id === resultShuffleThree.id
-  // ) {
-  //   // Adiciona dinheiro caso sejam iguais.
-  //   myBalance.add(resultShuffleOne.reward);
-  //   balanceElement.innerText = myBalance.getBalance();
-  //   changeTitle(resultShuffleOne);
-  // }
+    // Compara se todos os objetos são iguais.
+    if (
+      slotItemOneElement.title === slotItemTwoElement.title &&
+      slotItemTwoElement.title === slotItemThreeElement.title
+    ) {
+      // Adiciona dinheiro caso sejam iguais.
+      myBalance.add(callbackItem.reward);
+      balanceElement.innerText = myBalance.getBalance();
+      changeTitle(callbackItem);
+    }
+  });
 
   // desabilita o botão se o saldo for menor que zero.
   const getFinalBalance = myBalance.getBalance();
@@ -108,14 +106,21 @@ spinButtonElement.addEventListener('click', () => {
   }
 
   // Método que randomiza o objeto que será exibido em cada slot.
-  function shuffle(slotItemElement, iterations) {
+  function shuffle(slotItemElement, iterations, callback) {
 
     for (let i = 0; i <= iterations; i++) {
       setTimeout(() => {
         const itemsLenght = items.length;
         const randomNumber = Math.floor(Math.random() * itemsLenght);
         const selectedItem = items[randomNumber];
+        slotItemElement.alt = selectedItem.name;
+        slotItemElement.title = selectedItem.name;
         slotItemElement.src = selectedItem.src;
+
+        // executa um callback ao terminar de embaralhar,
+        if (callback && i === iterations) {
+          callback(selectedItem);
+        }
       }, 100 * i);
     }
   }
